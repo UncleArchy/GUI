@@ -1,9 +1,11 @@
+import os
 from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk, Image
 import subprocess
 import trimesh
 import dummy
+import diagnosis_predict.stomach_predict as predict
 
 
 def diagnosisDialog():
@@ -23,24 +25,28 @@ def diagnosisDialog():
 
     # Здесь должен происходить вызов функции, которая вернёт адрес файла с диагнозом
     # Пример ниже
-    outputFileAddress = dummy.dummy(inputFile)
+    outputFileAddress = predict.predict_category(inputFile)#dummy.dummy(inputFile)
     diagnosis = open(outputFileAddress, 'r')
     diagnosisLabel.configure(text=diagnosis.read())
     diagnosisButton.configure(text="Choose another file to scan")
 
 
 def tridimensionalDialog():
-    inputDirectory = filedialog.askdirectory()
-    utilInput = "-i " + inputDirectory
-    utilOutput = inputDirectory + ".stl"
+    startPath = os.path.curdir
+    inputDirectoryAbsolutePath = filedialog.askdirectory()
+    inputDirectoryRelPath = os.path.relpath(inputDirectoryAbsolutePath, startPath)
+    print(inputDirectoryRelPath)
+    utilInput = inputDirectoryRelPath
+    utilOutput = inputDirectoryRelPath + ".stl"
     # TODO: уточнить синтаксис вызова консольной команды, как минимум слеши в разных операционках в разные стороны
-    subprocess.call(['./dicom2mesh ', utilInput, '-t 150', utilOutput])
+    subprocess.call(["dicom2mesh.exe", "-i", utilInput, "-t", "650", "-tu", "700", "-o", utilOutput])
 
     mesh = trimesh.load(utilOutput)
     volume = mesh.volume
 
+    print("I WAS HERE")
     diagnosisLabel.configure(text="you can find your STL model in " + utilOutput)
-    volumeLabel.configure(text="Volume of model is " + volume)
+    volumeLabel.configure(text="Volume of model is " + "{:10.1f}".format(volume))
     stlButton.configure(text="Choose another directory for modelling")
     print()
 
