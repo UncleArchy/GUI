@@ -4,7 +4,6 @@ from tkinter import filedialog
 from PIL import ImageTk, Image
 import subprocess
 import trimesh
-import dummy
 import diagnosis_predict.stomach_predict as predict
 
 
@@ -15,11 +14,7 @@ def diagnosisDialog():
     # Вбрасываем изображение в окно
     userImage = Image.open(inputFile)
     userImage.thumbnail((200, 200), Image.ANTIALIAS)
-    # print(inputFile)
     imageTk = ImageTk.PhotoImage(userImage)
-    # imageLabel = Label(window, image=imageTk)
-    # imageLabel.image = imageTk
-    # imageLabel.grid(column=0, row=0)
     imageLabel.configure(image=imageTk)
     imageLabel.image = imageTk
 
@@ -39,7 +34,7 @@ def tridimensionalDialog():
     utilInput = inputDirectoryRelPath
     utilOutput = inputDirectoryRelPath + ".stl"
     # TODO: уточнить синтаксис вызова консольной команды, как минимум слеши в разных операционках в разные стороны
-    subprocess.call(["dicom2mesh.exe", "-i", utilInput, "-t", "650", "-tu", "700", "-o", utilOutput])
+    subprocess.call(["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-o", utilOutput])
 
     mesh = trimesh.load(utilOutput)
     volume = mesh.volume
@@ -53,12 +48,12 @@ def tridimensionalDialog():
 
 window = Tk()
 window.title("Добро пожаловать в приложение PythonRu")
-window.geometry('700x700')
+window.geometry('500x400')
 
 diagnosisLabel = Label(window, text="Welcome!", font=("Times New Roman", 16))
-diagnosisLabel.grid(column=0, row=1)
+diagnosisLabel.place(x=70, y=220)
 volumeLabel = Label(window, text=" ", font=("Times New Roman", 16))
-volumeLabel.grid(column=1, row=1)
+volumeLabel.place(x=100, y=245)
 
 welcomeImage = Image.open("2218.jpg")
 welcomeImage.thumbnail((200, 200), Image.ANTIALIAS)
@@ -66,10 +61,26 @@ welcomeImageTk = ImageTk.PhotoImage(welcomeImage)
 
 imageLabel = Label(window, image=welcomeImageTk)
 imageLabel.image = welcomeImage
-imageLabel.grid(column=0, row=0)
+imageLabel.place(x=70, y=0)
 
 diagnosisButton = Button(window, text="Choose file to scan", command=diagnosisDialog)
-diagnosisButton.grid(column=0, row=2)
+diagnosisButton.place(x=20, y=290)
 stlButton = Button(window, text="Choose directory for modelling", command=tridimensionalDialog)
-stlButton.grid(column=2, row=2)
+stlButton.place(x=150, y=290)
+
+isoFrom = StringVar()
+isoTo = StringVar()
+
+#Заполнять значения ISO нужно ДО выбора папки
+isoFromLabel = Label(window, text="ISO from:")
+isoFromLabel.place(x=20, y=320)
+isoFromEntry = Entry(window, textvariable=isoFrom)
+isoFromEntry.place(x=120, y=320)
+isoToLabel = Label(window, text="ISO to:")
+isoToLabel.place(x=20, y=350)
+isoToEntry = Entry(window, textvariable=isoTo)
+isoToEntry.place(x=120, y=350)
+
+
+
 window.mainloop()
