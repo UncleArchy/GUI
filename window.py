@@ -79,6 +79,6 @@ isoFromEntry.place(x=120, y=365)
 isoToLabel = Label(window, text="макс. ISO:")
 isoToLabel.place(x=20, y=395)
 isoToEntry = Entry(window, textvariable=isoTo)
-isoToEntry.placeЗ(x=120, y=395)
+isoToEntry.place(x=120, y=395)
 
 window.mainloop()
