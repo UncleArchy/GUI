@@ -11,19 +11,16 @@ def diagnosisDialog():
     global inputFile
     global outputFileAddress
     inputFile = filedialog.askopenfilename()
-    # Вбрасываем изображение в окно
     userImage = Image.open(inputFile)
     userImage.thumbnail((200, 200), Image.ANTIALIAS)
     imageTk = ImageTk.PhotoImage(userImage)
     imageLabel.configure(image=imageTk)
     imageLabel.image = imageTk
 
-    # Здесь должен происходить вызов функции, которая вернёт адрес файла с диагнозом
-    # Пример ниже
-    outputFileAddress = predict.predict_category(inputFile)#dummy.dummy(inputFile)
+    outputFileAddress = predict.predict_category(inputFile)
     diagnosis = open(outputFileAddress, 'r')
     diagnosisLabel.configure(text=diagnosis.read())
-    diagnosisButton.configure(text="Choose another file to scan")
+    # diagnosisButton.configure(text="Выбрать другой файл для сканирования")
 
 
 def tridimensionalDialog():
@@ -33,27 +30,28 @@ def tridimensionalDialog():
     print(inputDirectoryRelPath)
     utilInput = inputDirectoryRelPath
     utilOutput = inputDirectoryRelPath + ".stl"
-    # TODO: уточнить синтаксис вызова консольной команды, как минимум слеши в разных операционках в разные стороны
-    subprocess.call(["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-e", "0.1", "-o", utilOutput])
+    subprocess.call(
+        ["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-e", "0.1", "-o", utilOutput])
 
-    mesh = trimesh.load(utilOutput)
+    diagnosisLabel.configure(text="STL-модель находится в  " + utilOutput)
+    # modellingButton.configure(text="Выбрать другую папку для моделирования")
+
+
+def volumeDialog():
+    stlPath = filedialog.askopenfilename()
+    mesh = trimesh.load(stlPath)
     volume = mesh.volume
-
-    print("I WAS HERE")
-    diagnosisLabel.configure(text="you can find your STL model in " + utilOutput)
-    volumeLabel.configure(text="Volume of model is " + "{:10.1f}".format(volume))
-    stlButton.configure(text="Choose another directory for modelling")
-    print()
+    diagnosisLabel.configure(text="Объём модели " + "{:10.1f}".format(volume) + " куб.мм")
 
 
 window = Tk()
-window.title("Добро пожаловать в приложение PythonRu")
-window.geometry('500x400')
+window.title("Анализ DICOM-снимков")
+window.geometry('420x450')
 
-diagnosisLabel = Label(window, text="Welcome!", font=("Times New Roman", 16))
+diagnosisLabel = Label(window, text="Добро пожаловать!", font=("Times New Roman", 16))
 diagnosisLabel.place(x=70, y=220)
-volumeLabel = Label(window, text=" ", font=("Times New Roman", 16))
-volumeLabel.place(x=100, y=245)
+# volumeLabel = Label(window, text=" ", font=("Times New Roman", 16))
+# volumeLabel.place(x=100, y=245)
 
 welcomeImage = Image.open("2218.jpg")
 welcomeImage.thumbnail((200, 200), Image.ANTIALIAS)
@@ -63,24 +61,24 @@ imageLabel = Label(window, image=welcomeImageTk)
 imageLabel.image = welcomeImage
 imageLabel.place(x=70, y=0)
 
-diagnosisButton = Button(window, text="Choose file to scan", command=diagnosisDialog)
-diagnosisButton.place(x=20, y=290)
-stlButton = Button(window, text="Choose directory for modelling", command=tridimensionalDialog)
-stlButton.place(x=150, y=290)
+diagnosisButton = Button(window, text="Выбрать файл для сканирования", command=diagnosisDialog)
+diagnosisButton.place(x=20, y=260)
+modellingButton = Button(window, text="Выбрать папку для моделирования", command=tridimensionalDialog)
+modellingButton.place(x=20, y=295)
+volumeButton = Button(window, text="Вычислить объём модели", command=volumeDialog)
+volumeButton.place(x=20, y=330)
 
 isoFrom = StringVar()
 isoTo = StringVar()
 
-#Заполнять значения ISO нужно ДО выбора папки
-isoFromLabel = Label(window, text="ISO from:")
-isoFromLabel.place(x=20, y=320)
+# Заполнять значения ISO нужно ДО выбора папки
+isoFromLabel = Label(window, text="мин. ISO:")
+isoFromLabel.place(x=20, y=365)
 isoFromEntry = Entry(window, textvariable=isoFrom)
-isoFromEntry.place(x=120, y=320)
-isoToLabel = Label(window, text="ISO to:")
-isoToLabel.place(x=20, y=350)
+isoFromEntry.place(x=120, y=365)
+isoToLabel = Label(window, text="макс. ISO:")
+isoToLabel.place(x=20, y=395)
 isoToEntry = Entry(window, textvariable=isoTo)
-isoToEntry.place(x=120, y=350)
-
-
+isoToEntry.placeЗ(x=120, y=395)
 
 window.mainloop()
