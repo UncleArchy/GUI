@@ -31,7 +31,7 @@ def tridimensionalDialog():
     utilInput = inputDirectoryRelPath
     utilOutput = inputDirectoryRelPath + ".stl"
     subprocess.call(
-        ["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-e", "0.1", "-o", utilOutput])
+        ["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-e", "0.15", "-o", utilOutput])
 
     diagnosisLabel.configure(text="STL-модель находится в  " + utilOutput)
     # modellingButton.configure(text="Выбрать другую папку для моделирования")
@@ -53,7 +53,7 @@ diagnosisLabel.place(x=70, y=220)
 # volumeLabel = Label(window, text=" ", font=("Times New Roman", 16))
 # volumeLabel.place(x=100, y=245)
 
-welcomeImage = Image.open("2218.jpg")
+welcomeImage = Image.open("welcome.jpg")
 welcomeImage.thumbnail((200, 200), Image.ANTIALIAS)
 welcomeImageTk = ImageTk.PhotoImage(welcomeImage)
 
