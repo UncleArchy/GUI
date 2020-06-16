@@ -34,7 +34,7 @@ def tridimensionalDialog():
     utilInput = inputDirectoryRelPath
     utilOutput = inputDirectoryRelPath + ".stl"
     # TODO: уточнить синтаксис вызова консольной команды, как минимум слеши в разных операционках в разные стороны
-    subprocess.call(["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-o", utilOutput])
+    subprocess.call(["dicom2mesh.exe", "-i", utilInput, "-t", isoFrom.get(), "-tu", isoTo.get(), "-e", "0.1", "-o", utilOutput])
 
     mesh = trimesh.load(utilOutput)
     volume = mesh.volume
